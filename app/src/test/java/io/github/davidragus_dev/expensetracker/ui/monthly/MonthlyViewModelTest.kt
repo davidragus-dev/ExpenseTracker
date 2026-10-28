@@ -20,6 +20,7 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -107,10 +108,57 @@ class MonthlyViewModelTest {
 
         repository.add(expense(700, LocalDate.of(2026, 10, 9)))
 
-        // The list and the totals come from two queries, so wait until both are updated
-        val updated = viewModel.uiState.first { it.transactions.isNotEmpty() && it.totals.expenseCents > 0 }
+        // Totals are computed from the list, so the first non-empty state is already consistent
+        val updated = viewModel.uiState.first { it.transactions.isNotEmpty() }
         assertEquals(700L, updated.totals.expenseCents)
         assertEquals(1, updated.transactions.size)
+    }
+
+    @Test
+    fun delete_removesTheTransaction_andUndoRestoresIt() = runTest {
+        val id = repository.add(expense(700, LocalDate.of(2026, 10, 9)))
+        val viewModel = MonthlyViewModel(repository, initialMonth = october)
+        backgroundScope.launch { viewModel.uiState.collect {} }
+        val item = viewModel.uiState.first { it.transactions.isNotEmpty() }.transactions.single()
+
+        viewModel.delete(item)
+        val afterDelete = viewModel.uiState.first { it.transactions.isEmpty() }
+        assertEquals(0L, afterDelete.totals.expenseCents)
+
+        viewModel.undoDelete()
+        val restored = viewModel.uiState.first { it.transactions.isNotEmpty() }.transactions.single()
+        // Same data, new id (see MonthlyViewModel.undoDelete)
+        assertNotEquals(id, restored.transaction.id)
+        assertEquals(item.transaction.copy(id = restored.transaction.id), restored.transaction)
+    }
+
+    @Test
+    fun undoDelete_keepsThePositionWithinTheSameDay() = runTest {
+        val day = LocalDate.of(2026, 10, 9)
+        repository.add(expense(100, day).copy(createdAt = 1_000))
+        repository.add(expense(200, day).copy(createdAt = 2_000))
+        repository.add(expense(300, day).copy(createdAt = 3_000))
+        val viewModel = MonthlyViewModel(repository, initialMonth = october)
+        backgroundScope.launch { viewModel.uiState.collect {} }
+        val middle = viewModel.uiState.first { it.transactions.size == 3 }.transactions[1]
+
+        viewModel.delete(middle)
+        viewModel.uiState.first { it.transactions.size == 2 }
+        viewModel.undoDelete()
+
+        val amounts = viewModel.uiState.first { it.transactions.size == 3 }.transactions.map { it.transaction.amountCents }
+        assertEquals(listOf(300L, 200L, 100L), amounts)
+    }
+
+    @Test
+    fun defaultNewTransactionDate_isTodayInTheCurrentMonth_elseTheFirstDay() {
+        val today = LocalDate.of(2026, 10, 28)
+
+        assertEquals(today, MonthlyUiState(october).defaultNewTransactionDate(today))
+        assertEquals(
+            LocalDate.of(2026, 9, 1),
+            MonthlyUiState(october.minusMonths(1)).defaultNewTransactionDate(today),
+        )
     }
 
     private fun expense(cents: Long, date: LocalDate) =
