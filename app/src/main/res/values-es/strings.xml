@@ -28,4 +28,15 @@
     <string name="delete">Borrar</string>
     <string name="transaction_deleted">Movimiento borrado</string>
     <string name="undo">Deshacer</string>
+
+    <!-- About screen (GPL legal notices) -->
+    <string name="about">Acerca de</string>
+    <string name="about_version">Versión %1$s</string>
+    <string name="about_license_notice_translated">Expense Tracker es software libre: puedes redistribuirlo y/o modificarlo según los términos de la Licencia Pública General de GNU publicada por la Free Software Foundation, ya sea la versión 3 de la licencia o (a tu elección) cualquier versión posterior.</string>
+    <string name="about_no_warranty_translated">Este programa se distribuye con la esperanza de que sea útil, pero SIN NINGUNA GARANTÍA; ni siquiera la garantía implícita de COMERCIABILIDAD o IDONEIDAD PARA UN PROPÓSITO PARTICULAR. Consulta la Licencia Pública General de GNU para más detalles.</string>
+    <string name="about_translation_note">Traducción no oficial del aviso anterior. Solo el texto original en inglés tiene validez legal.</string>
+    <string name="about_read_license">Leer la licencia (GPL-3.0)</string>
+    <string name="about_source_code">Código fuente en GitHub</string>
+    <string name="about_third_party_title">Licencias de terceros</string>
+    <string name="about_third_party_body">Esta aplicación usa componentes de código abierto distribuidos bajo la Apache License 2.0: Android Jetpack (Compose, Room, Navigation y Lifecycle), las librerías de Kotlin y kotlinx, y los iconos Material Symbols.</string>
 </resources>

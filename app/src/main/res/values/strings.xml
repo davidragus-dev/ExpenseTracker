@@ -30,4 +30,21 @@
     <string name="delete">Delete</string>
     <string name="transaction_deleted">Transaction deleted</string>
     <string name="undo">Undo</string>
+
+    <!-- About screen (GPL legal notices) -->
+    <string name="about">About</string>
+    <string name="about_version">Version %1$s</string>
+    <string name="about_copyright" translatable="false">Copyright © 2026 David Ruiz</string>
+    <!-- Official notice: always shown in English -->
+    <string name="about_license_notice" translatable="false">Expense Tracker is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.</string>
+    <string name="about_no_warranty" translatable="false">This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.</string>
+    <!-- Only translations fill these: an unofficial translation of the notice, shown below it -->
+    <string name="about_translation_note"></string>
+    <string name="about_license_notice_translated"></string>
+    <string name="about_no_warranty_translated"></string>
+    <string name="about_read_license">Read the license (GPL-3.0)</string>
+    <string name="about_source_code">Source code on GitHub</string>
+    <string name="about_third_party_title">Third-party licenses</string>
+    <string name="about_third_party_body">This app uses open source components distributed under the Apache License 2.0: Android Jetpack (Compose, Room, Navigation and Lifecycle), the Kotlin and kotlinx libraries, and Material Symbols icons.</string>
+    <string name="about_apache_license" translatable="false">Apache License 2.0</string>
 </resources>
