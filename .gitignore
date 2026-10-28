@@ -1,4 +1,4 @@
-# Gradle y Kotlin
+# Gradle and Kotlin
 .gradle/
 .kotlin/
 build/
@@ -6,18 +6,18 @@ build/
 .externalNativeBuild
 .cxx
 
-# Configuración local (ruta del SDK, etc.)
+# Local configuration (SDK path, etc.)
 local.properties
 
-# Android Studio / IntelliJ: se ignora todo salvo el estilo de código compartido
+# Android Studio / IntelliJ: ignore everything except the shared code style
 *.iml
 /.idea/*
 !/.idea/codeStyles/
 
-# Firma de la app: NUNCA subir claves ni contraseñas
+# App signing: NEVER commit keys or passwords
 *.jks
 *.keystore
 keystore.properties
 
-# Sistema
+# System
 .DS_Store
