@@ -8,10 +8,11 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
 }
 
-// Release signing data lives in keystore.properties, which is git-ignored and never committed
+// Release signing data lives in keystore.properties, which is git-ignored and never committed.
+// It is read as UTF-8 so passwords with characters like "ñ" work (the default is ISO-8859-1).
 val keystorePropertiesFile = rootProject.file("keystore.properties")
 val keystoreProperties = Properties().apply {
-    if (keystorePropertiesFile.exists()) keystorePropertiesFile.inputStream().use { load(it) }
+    if (keystorePropertiesFile.exists()) keystorePropertiesFile.reader(Charsets.UTF_8).use { load(it) }
 }
 
 android {
