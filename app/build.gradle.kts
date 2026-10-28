@@ -34,6 +34,24 @@ android {
     buildFeatures {
         compose = true
     }
+<<<<<<< Updated upstream
+=======
+    testOptions {
+        unitTests.isIncludeAndroidResources = true
+        unitTests.all {
+            // Robolectric needs access to JDK internals when simulating Android
+            it.jvmArgs(
+                "--add-exports", "java.base/jdk.internal.access=ALL-UNNAMED",
+                "--enable-native-access=ALL-UNNAMED",
+            )
+        }
+    }
+}
+
+room {
+    // Export the database schema as JSON so migrations can be written and tested
+    schemaDirectory("$projectDir/schemas")
+>>>>>>> Stashed changes
 }
 
 dependencies {
