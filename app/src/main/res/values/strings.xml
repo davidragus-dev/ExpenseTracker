@@ -1,3 +1,12 @@
 <resources>
-    <string name="app_name">Expense Tracker</string>
+    <string name="app_name" translatable="false">Expense Tracker</string>
+
+    <!-- Monthly screen -->
+    <string name="previous_month">Previous month</string>
+    <string name="next_month">Next month</string>
+    <string name="balance">Balance</string>
+    <string name="income">Income</string>
+    <string name="expenses">Expenses</string>
+    <string name="transactions">Transactions</string>
+    <string name="no_transactions">No transactions this month</string>
 </resources>
