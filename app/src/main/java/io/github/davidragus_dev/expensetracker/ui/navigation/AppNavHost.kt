@@ -1,3 +1,23 @@
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Expense Tracker - keep track of monthly income and expenses
+ * Copyright (C) 2026 David Ruiz
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package io.github.davidragus_dev.expensetracker.ui.navigation
 
 import androidx.compose.runtime.Composable
@@ -6,6 +26,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
+import io.github.davidragus_dev.expensetracker.ui.about.AboutScreen
 import io.github.davidragus_dev.expensetracker.ui.monthly.MonthlyScreen
 import io.github.davidragus_dev.expensetracker.ui.transaction.TransactionFormScreen
 import io.github.davidragus_dev.expensetracker.ui.transaction.TransactionFormViewModel
@@ -17,6 +38,9 @@ import java.time.LocalDate
 
 @Serializable
 object MonthlyRoute
+
+@Serializable
+object AboutRoute
 
 @Serializable
 data class TransactionFormRoute(
@@ -39,6 +63,7 @@ fun AppNavHost() {
                 onEditTransaction = { id ->
                     navController.navigate(TransactionFormRoute(transactionId = id))
                 },
+                onOpenAbout = { navController.navigate(AboutRoute) },
             )
         }
         composable<TransactionFormRoute> { backStackEntry ->
@@ -52,6 +77,9 @@ fun AppNavHost() {
                 ),
                 onClose = { navController.popBackStack() },
             )
+        }
+        composable<AboutRoute> {
+            AboutScreen(onBack = { navController.popBackStack() })
         }
     }
 }
