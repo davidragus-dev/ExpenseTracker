@@ -1,3 +1,23 @@
+/*
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ *
+ * Expense Tracker - keep track of monthly income and expenses
+ * Copyright (C) 2026 David Ruiz
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package io.github.davidragus_dev.expensetracker.ui.monthly
 
 import androidx.compose.foundation.layout.PaddingValues
@@ -10,6 +30,7 @@ import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
@@ -46,6 +67,7 @@ import java.time.YearMonth
 fun MonthlyScreen(
     onAddTransaction: (defaultDate: LocalDate) -> Unit,
     onEditTransaction: (transactionId: Long) -> Unit,
+    onOpenAbout: () -> Unit,
     viewModel: MonthlyViewModel = viewModel(factory = MonthlyViewModel.Factory),
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
@@ -61,6 +83,7 @@ fun MonthlyScreen(
         onNextMonth = viewModel::showNextMonth,
         onAddTransaction = { onAddTransaction(state.defaultNewTransactionDate()) },
         onTransactionClick = { onEditTransaction(it.transaction.id) },
+        onOpenAbout = onOpenAbout,
         onTransactionDelete = { item ->
             viewModel.delete(item)
             scope.launch {
@@ -87,13 +110,21 @@ fun MonthlyContent(
     onAddTransaction: () -> Unit,
     onTransactionClick: (TransactionWithCategory) -> Unit,
     onTransactionDelete: (TransactionWithCategory) -> Unit,
+    onOpenAbout: () -> Unit,
     modifier: Modifier = Modifier,
     snackbarHostState: SnackbarHostState = remember { SnackbarHostState() },
 ) {
     Scaffold(
         modifier = modifier.fillMaxSize(),
         topBar = {
-            CenterAlignedTopAppBar(title = { Text(stringResource(R.string.app_name)) })
+            CenterAlignedTopAppBar(
+                title = { Text(stringResource(R.string.app_name)) },
+                actions = {
+                    IconButton(onClick = onOpenAbout) {
+                        Icon(painterResource(R.drawable.ic_info), contentDescription = stringResource(R.string.about))
+                    }
+                },
+            )
         },
         floatingActionButton = {
             FloatingActionButton(onClick = onAddTransaction) {
@@ -184,6 +215,7 @@ private fun MonthlyContentPreview() {
             onAddTransaction = {},
             onTransactionClick = {},
             onTransactionDelete = {},
+            onOpenAbout = {},
         )
     }
 }
@@ -199,6 +231,7 @@ private fun MonthlyContentEmptyPreview() {
             onAddTransaction = {},
             onTransactionClick = {},
             onTransactionDelete = {},
+            onOpenAbout = {},
         )
     }
 }
