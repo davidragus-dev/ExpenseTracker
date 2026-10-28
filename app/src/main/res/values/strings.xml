@@ -1,3 +1,33 @@
 <resources>
-    <string name="app_name">Expense Tracker</string>
+    <string name="app_name" translatable="false">Expense Tracker</string>
+
+    <!-- Monthly screen -->
+    <string name="previous_month">Previous month</string>
+    <string name="next_month">Next month</string>
+    <string name="balance">Balance</string>
+    <string name="income">Income</string>
+    <string name="expenses">Expenses</string>
+    <string name="transactions">Transactions</string>
+    <string name="no_transactions">No transactions this month</string>
+
+    <!-- Transaction form -->
+    <string name="new_transaction">New transaction</string>
+    <string name="edit_transaction">Edit transaction</string>
+    <string name="back">Back</string>
+    <string name="type_expense">Expense</string>
+    <string name="type_income">Income</string>
+    <string name="amount">Amount</string>
+    <string name="amount_error">Enter an amount greater than 0</string>
+    <string name="category">Category</string>
+    <string name="date">Date</string>
+    <string name="note">Note (optional)</string>
+    <string name="save">Save</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+
+    <!-- Adding and deleting from the monthly screen -->
+    <string name="add_transaction">Add transaction</string>
+    <string name="delete">Delete</string>
+    <string name="transaction_deleted">Transaction deleted</string>
+    <string name="undo">Undo</string>
 </resources>
