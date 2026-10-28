@@ -8,12 +8,21 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -28,17 +37,43 @@ import io.github.davidragus_dev.expensetracker.domain.model.MonthTotals
 import io.github.davidragus_dev.expensetracker.domain.model.TransactionType.EXPENSE
 import io.github.davidragus_dev.expensetracker.domain.model.TransactionType.INCOME
 import io.github.davidragus_dev.expensetracker.ui.theme.ExpenseTrackerTheme
+import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.YearMonth
 
 /** Main screen: the selected month, its summary and its transactions. */
 @Composable
-fun MonthlyScreen(viewModel: MonthlyViewModel = viewModel(factory = MonthlyViewModel.Factory)) {
+fun MonthlyScreen(
+    onAddTransaction: (defaultDate: LocalDate) -> Unit,
+    onEditTransaction: (transactionId: Long) -> Unit,
+    viewModel: MonthlyViewModel = viewModel(factory = MonthlyViewModel.Factory),
+) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
+    val deletedMessage = stringResource(R.string.transaction_deleted)
+    val undoLabel = stringResource(R.string.undo)
+
     MonthlyContent(
         state = state,
+        snackbarHostState = snackbarHostState,
         onPreviousMonth = viewModel::showPreviousMonth,
         onNextMonth = viewModel::showNextMonth,
+        onAddTransaction = { onAddTransaction(state.defaultNewTransactionDate()) },
+        onTransactionClick = { onEditTransaction(it.transaction.id) },
+        onTransactionDelete = { item ->
+            viewModel.delete(item)
+            scope.launch {
+                // Only the last deletion can be undone, so replace any previous message
+                snackbarHostState.currentSnackbarData?.dismiss()
+                val result = snackbarHostState.showSnackbar(
+                    message = deletedMessage,
+                    actionLabel = undoLabel,
+                    duration = SnackbarDuration.Short,
+                )
+                if (result == SnackbarResult.ActionPerformed) viewModel.undoDelete()
+            }
+        },
     )
 }
 
@@ -49,19 +84,30 @@ fun MonthlyContent(
     state: MonthlyUiState,
     onPreviousMonth: () -> Unit,
     onNextMonth: () -> Unit,
+    onAddTransaction: () -> Unit,
+    onTransactionClick: (TransactionWithCategory) -> Unit,
+    onTransactionDelete: (TransactionWithCategory) -> Unit,
     modifier: Modifier = Modifier,
+    snackbarHostState: SnackbarHostState = remember { SnackbarHostState() },
 ) {
     Scaffold(
         modifier = modifier.fillMaxSize(),
         topBar = {
             CenterAlignedTopAppBar(title = { Text(stringResource(R.string.app_name)) })
         },
+        floatingActionButton = {
+            FloatingActionButton(onClick = onAddTransaction) {
+                Icon(painterResource(R.drawable.ic_add), contentDescription = stringResource(R.string.add_transaction))
+            }
+        },
+        snackbarHost = { SnackbarHost(snackbarHostState) },
     ) { innerPadding ->
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(
                 top = innerPadding.calculateTopPadding(),
-                bottom = innerPadding.calculateBottomPadding() + 16.dp,
+                // Extra space so the last row is not hidden behind the "+" button
+                bottom = innerPadding.calculateBottomPadding() + 88.dp,
             ),
         ) {
             item {
@@ -99,7 +145,12 @@ fun MonthlyContent(
                 }
             }
             items(state.transactions, key = { it.transaction.id }) { item ->
-                TransactionRow(item)
+                SwipeToDeleteTransactionRow(
+                    item = item,
+                    onClick = { onTransactionClick(item) },
+                    onDelete = { onTransactionDelete(item) },
+                    modifier = Modifier.animateItem(),
+                )
             }
         }
     }
@@ -130,6 +181,9 @@ private fun MonthlyContentPreview() {
             ),
             onPreviousMonth = {},
             onNextMonth = {},
+            onAddTransaction = {},
+            onTransactionClick = {},
+            onTransactionDelete = {},
         )
     }
 }
@@ -142,6 +196,9 @@ private fun MonthlyContentEmptyPreview() {
             state = MonthlyUiState(month = YearMonth.now(), isLoading = false),
             onPreviousMonth = {},
             onNextMonth = {},
+            onAddTransaction = {},
+            onTransactionClick = {},
+            onTransactionDelete = {},
         )
     }
 }
