@@ -1,8 +1,6 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
-    alias(libs.plugins.ksp)
-    alias(libs.plugins.room)
 }
 
 android {
@@ -36,21 +34,6 @@ android {
     buildFeatures {
         compose = true
     }
-    testOptions {
-        unitTests.isIncludeAndroidResources = true
-        unitTests.all {
-            // Robolectric necesita acceder a clases internas del JDK al simular Android
-            it.jvmArgs(
-                "--add-exports", "java.base/jdk.internal.access=ALL-UNNAMED",
-                "--enable-native-access=ALL-UNNAMED",
-            )
-        }
-    }
-}
-
-room {
-    // Guarda el esquema de la base de datos en JSON para poder hacer migraciones
-    schemaDirectory("$projectDir/schemas")
 }
 
 dependencies {
@@ -62,14 +45,7 @@ dependencies {
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
-    implementation(libs.androidx.room.runtime)
-    implementation(libs.androidx.room.ktx)
-    ksp(libs.androidx.room.compiler)
     testImplementation(libs.junit)
-    testImplementation(libs.androidx.junit)
-    testImplementation(libs.androidx.test.core.ktx)
-    testImplementation(libs.kotlinx.coroutines.test)
-    testImplementation(libs.robolectric)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     androidTestImplementation(libs.androidx.espresso.core)
