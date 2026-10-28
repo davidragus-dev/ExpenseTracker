@@ -15,13 +15,16 @@ import java.time.LocalDate
 @Dao
 interface TransactionDao {
 
-    /** Transactions between two dates (both inclusive), most recent first. */
+    /**
+     * Transactions between two dates (both inclusive), most recent first. Within the same day,
+     * the last created goes first (by createdAt, so a restored transaction keeps its place).
+     */
     @Transaction
     @Query(
         """
         SELECT * FROM transactions
         WHERE date BETWEEN :from AND :to
-        ORDER BY date DESC, id DESC
+        ORDER BY date DESC, createdAt DESC, id DESC
         """
     )
     fun observeBetween(from: LocalDate, to: LocalDate): Flow<List<TransactionWithCategory>>
